@@ -11,7 +11,7 @@ Esse projeto tem objetivo fazer a gestão dos recursos provenientes de doação 
 
 ## Modelagem Entidade e Relacionamento - MER
 
-[!IMAGEM](/src/main/md/semfronteiras%20mer.png)
+![IMAGEM](/src/main/md/semfronteiras%20mer.png)
 ```bash
 
 testando
