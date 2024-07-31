@@ -1,17 +1,15 @@
-![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
-
-
 # [ API ] - SemFronteiras
 Esse projeto tem objetivo fazer a gestão dos recursos provenientes de doação e gestão das pessoas que estarão em frente de campo para ajuda humanitária.
+
+>[!IMPORTANT]
+> * Está documentação ainda está sem construção.
 
 ## Pré Requisitos
 * Acesse o [projeto de front]() para o usar está api
 
 ## Modelagem Entidade e Relacionamento - MER
 
-[!IMAGEM](/src/main/md/semfronteiras%20mer.png)
+![IMAGEM](/src/main/md/semfronteiras%20mer.png)
 ```bash
 
 testando
