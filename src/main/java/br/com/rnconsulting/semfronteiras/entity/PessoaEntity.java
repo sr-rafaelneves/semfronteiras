@@ -23,8 +23,7 @@ public class PessoaEntity {
     private String tituloEleitor;
     private String numPassaporte;
     private String federacaoPassaporte;
-    private int statusPessoa;
+    private String statusPessoa;
     private String tipoPessoa;
-
 
 }
