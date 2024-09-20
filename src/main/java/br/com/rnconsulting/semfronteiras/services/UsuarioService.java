@@ -1,7 +1,6 @@
 package br.com.rnconsulting.semfronteiras.services;
 
 import br.com.rnconsulting.semfronteiras.Exception.CustomException;
-import br.com.rnconsulting.semfronteiras.entity.PessoaEntity;
 import br.com.rnconsulting.semfronteiras.entity.UsuarioEntity;
 import br.com.rnconsulting.semfronteiras.repositories.PessoaRepository;
 import br.com.rnconsulting.semfronteiras.repositories.UsuarioRepository;
@@ -18,12 +17,14 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PessoaRepository pessoaRepository;
+
     public List<UsuarioEntity> listarUsuarios() {
 
 
         return usuarioRepository.findAll();
     }
-
 
     public ResponseEntity<?> criarUsuario(UsuarioEntity usuarioEntity) {
 
@@ -36,12 +37,11 @@ public class UsuarioService {
 
         }
 
+        //VALIDA SE EXISTE UMA PESSOA CADASTRADA COM O CPFCNPJ INFORMADO
+        if(pessoaRepository.findById(usuarioEntity.getPessoaEntity().getCpfcnpj()).isEmpty()){
+            throw new CustomException("Não Existe Pessoa Cadastrada com CPFCNPJ Informado");
 
-          /*  else if(pesquisar pessoa pelo cpf no PessoaService quando Implementado)
-            Caso o Retorno a pessoa não seja presente (isPresent()) ou seja não está cadastrado,
-            então exibir o throw.
-            throw new CustomException("Pessoa Não Consta na Base de Dados")
-            */
+        }
 
         // SE A SITUAÇÃO DO USUARIO NÃO FOR PASSADA SERÁ POR PADRÃO CRIADO ATIVO
         if (usuarioEntity.getSituacao() == null || usuarioEntity.getSituacao().isEmpty()) {
@@ -49,22 +49,23 @@ public class UsuarioService {
             usuarioEntity.setSituacao("A");
 
         }
-
-      if(usuarioRepository.findBycpfcnpj(usuarioEntity.getCpfcnpj()).isPresent()){
+        //VERIFICA SE JÁ EXISTE USUARIO CADASTRADO COM O CPFCNPJ INFOMRADO
+      if(usuarioRepository.findByPessoaEntityCpfcnpj(usuarioEntity.getPessoaEntity().getCpfcnpj()).isPresent()){
           throw  new CustomException("O CPFCNPJ já está vinculado a um Usuário");
       }
-
 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuarioEntity));
     }
 
     public UsuarioEntity atualizarUsuario(UsuarioEntity usuarioEntity) {
 
-        /* if(pesquisar pessoa pelo cpf no PessoaService quando Implementado)
-            Caso o Retorno a pessoa não seja presente (isPresent()) ou seja não está cadastrado,
-            então exibir o throw.
-            throw new CustomException("CPFCNPJ Não Consta na Base de Dados")
-            */
+
+
+        //VALIDA SE EXISTE UMA PESSOA CADASTRADA COM O CPFCNPJ INFORMADO
+        if(pessoaRepository.findById(usuarioEntity.getPessoaEntity().getCpfcnpj()).isEmpty()){
+            throw new CustomException("Não Existe Pessoa Cadastrada com CPFCNPJ Informado");
+
+        }
 
         if (!usuarioRepository.findById(usuarioEntity.getEmail()).isPresent()) {
             throw new CustomException("Não foi Encontrado Usuário com o Email informado");
@@ -87,7 +88,7 @@ public class UsuarioService {
 
         }
 
-        if (usuarioEntity.getCpfcnpj() == null || usuarioEntity.getCpfcnpj().isEmpty()) {
+        if (usuarioEntity.getPessoaEntity().getCpfcnpj() == null || usuarioEntity.getPessoaEntity().getCpfcnpj().isEmpty()) {
 
             throw new CustomException("O campo CPFCNPJ não pode ser Nulo ou em Branco");
 
