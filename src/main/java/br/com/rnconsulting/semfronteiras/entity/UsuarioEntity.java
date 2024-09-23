@@ -1,6 +1,7 @@
 package br.com.rnconsulting.semfronteiras.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,16 +19,13 @@ public class UsuarioEntity {
     @NonNull
     private String senha;
 
-    @Column(unique = true)
-    @NonNull
-    private String cpfcnpj;
 
     @NonNull
     private String situacao;
 
-   /* @OneToOne
+    @OneToOne
     @JoinColumn(name = "cpfcnpj")
     private PessoaEntity pessoaEntity;
-    */
+
 
 }

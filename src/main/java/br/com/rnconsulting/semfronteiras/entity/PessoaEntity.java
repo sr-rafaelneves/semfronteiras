@@ -13,7 +13,7 @@ public class PessoaEntity {
     
     @Id
     @Column(length = 14, unique = true)
-    private String cpf;
+    private String cpfcnpj;
     private String numRg;
     private String ufRg;
     private String nomeCompleto;
