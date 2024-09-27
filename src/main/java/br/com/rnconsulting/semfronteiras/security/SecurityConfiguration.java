@@ -30,6 +30,7 @@ public class SecurityConfiguration {
 
                         // authorize.requestMatchers(HttpMethod.DELETE, "/usuario").hasRole("ADMIN") CASO QUEIRA BLOQUEAR PARA SOMENTE ADMIN UMA ROTA ESPECIFICA
                         authorize.requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
+                                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
