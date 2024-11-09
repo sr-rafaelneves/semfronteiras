@@ -1,15 +1,15 @@
 package br.com.rnconsulting.semfronteiras.services;
 
 import br.com.rnconsulting.semfronteiras.Exception.CustomException;
+import br.com.rnconsulting.semfronteiras.dto.UsuarioDTO;
 import br.com.rnconsulting.semfronteiras.entity.UsuarioEntity;
 import br.com.rnconsulting.semfronteiras.repositories.PessoaRepository;
 import br.com.rnconsulting.semfronteiras.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -20,11 +20,24 @@ public class UsuarioService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public List<UsuarioEntity> listarUsuarios() {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
+    public ResponseEntity<?> listarUsuarios() {
 
-        return usuarioRepository.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.findAll());
+        }
+
+    public ResponseEntity<?> pesqUsuarioId(String email){
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.findById(email));
     }
+
+    public ResponseEntity<?> pesqUsuarioCpfcnpj(String cpfcnpj){
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioRepository.findByPessoaEntityCpfcnpj(cpfcnpj));
+    }
+
 
     public ResponseEntity<?> criarUsuario(UsuarioEntity usuarioEntity) {
 
@@ -36,11 +49,27 @@ public class UsuarioService {
             throw new CustomException("E-mail já cadastrado");
 
         }
+        //VERIFICA SE PESSOAENTITY NÃO FOI INFORMADO
+        if(usuarioEntity.getPessoaEntity() == null){
+            throw new CustomException("PessoaEntity Não informado");
+        }
+
+        //VERIFICA SE O CPFCNPJ NÃO FOI INFORMADO
+        if (usuarioEntity.getPessoaEntity().getCpfcnpj() == null || usuarioEntity.getPessoaEntity().getCpfcnpj().isEmpty()) {
+
+            throw new CustomException("O campo CPFCNPJ não pode ser Nulo ou em Branco");
+
+        }
 
         //VALIDA SE EXISTE UMA PESSOA CADASTRADA COM O CPFCNPJ INFORMADO
         if(pessoaRepository.findById(usuarioEntity.getPessoaEntity().getCpfcnpj()).isEmpty()){
             throw new CustomException("Não Existe Pessoa Cadastrada com CPFCNPJ Informado");
 
+        }
+
+        //VERIFICA SE JÁ EXISTE USUARIO CADASTRADO COM O CPFCNPJ INFOMRADO
+        if(usuarioRepository.findByPessoaEntityCpfcnpj(usuarioEntity.getPessoaEntity().getCpfcnpj()).isPresent()){
+            throw  new CustomException("O CPFCNPJ já está vinculado a um Usuário");
         }
 
         // SE A SITUAÇÃO DO USUARIO NÃO FOR PASSADA SERÁ POR PADRÃO CRIADO ATIVO
@@ -49,12 +78,12 @@ public class UsuarioService {
             usuarioEntity.setSituacao("A");
 
         }
-        //VERIFICA SE JÁ EXISTE USUARIO CADASTRADO COM O CPFCNPJ INFOMRADO
-      if(usuarioRepository.findByPessoaEntityCpfcnpj(usuarioEntity.getPessoaEntity().getCpfcnpj()).isPresent()){
-          throw  new CustomException("O CPFCNPJ já está vinculado a um Usuário");
-      }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuarioEntity));
+        usuarioEntity.setSenha(passwordEncoder.encode(usuarioEntity.getSenha())); // CRIPTOGRAFA A SENHA
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioRepository.save(usuarioEntity)); // DTO
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDTO);
     }
 
     public UsuarioEntity atualizarUsuario(UsuarioEntity usuarioEntity) {
@@ -88,11 +117,6 @@ public class UsuarioService {
 
         }
 
-        if (usuarioEntity.getPessoaEntity().getCpfcnpj() == null || usuarioEntity.getPessoaEntity().getCpfcnpj().isEmpty()) {
-
-            throw new CustomException("O campo CPFCNPJ não pode ser Nulo ou em Branco");
-
-        }
 
         // VALIDAR CAMPO SENHA
         if (usuarioEntity.getSenha() == null || usuarioEntity.getSenha().isEmpty()) {
