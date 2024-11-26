@@ -1,7 +1,6 @@
 package br.com.rnconsulting.semfronteiras.services;
 
 import br.com.rnconsulting.semfronteiras.Exception.CustomException;
-import br.com.rnconsulting.semfronteiras.dto.UsuarioDTO;
 import br.com.rnconsulting.semfronteiras.entity.UsuarioEntity;
 import br.com.rnconsulting.semfronteiras.repositories.PessoaRepository;
 import br.com.rnconsulting.semfronteiras.repositories.UsuarioRepository;
@@ -75,15 +74,23 @@ public class UsuarioService {
         // SE A SITUAÇÃO DO USUARIO NÃO FOR PASSADA SERÁ POR PADRÃO CRIADO ATIVO
         if (usuarioEntity.getSituacao() == null || usuarioEntity.getSituacao().isEmpty()) {
 
-            usuarioEntity.setSituacao("A");
+                usuarioEntity.setSituacao("A");
 
         }
+        if(usuarioEntity.getSituacao().length() > 1 ) {
+
+            throw new CustomException("Atributo situacao deve informar 'A' para Ativo ou 'I' para Inativo");
+        }else if(usuarioEntity.getSituacao() != "N" && usuarioEntity.getSituacao() != "A"){
+
+            throw new CustomException("Atributo situacao deve informar 'A' para Ativo ou 'I' para Inativo");
+        }
+
 
         usuarioEntity.setSenha(passwordEncoder.encode(usuarioEntity.getSenha())); // CRIPTOGRAFA A SENHA
 
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioRepository.save(usuarioEntity)); // DTO
+        usuarioRepository.save(usuarioEntity);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public UsuarioEntity atualizarUsuario(UsuarioEntity usuarioEntity) {
