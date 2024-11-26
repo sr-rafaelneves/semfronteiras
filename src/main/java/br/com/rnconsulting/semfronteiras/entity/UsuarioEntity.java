@@ -25,7 +25,7 @@ public class UsuarioEntity {
 
     @OneToOne
     @JoinColumn(name = "cpfcnpj")
-    private PessoaEntity pessoaEntity;
+    private PessoaEntity pessoaEntity = new PessoaEntity();
 
 
 }
