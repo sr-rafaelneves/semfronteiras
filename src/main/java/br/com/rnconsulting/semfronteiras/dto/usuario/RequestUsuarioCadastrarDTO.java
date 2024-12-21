@@ -1,12 +1,17 @@
 package br.com.rnconsulting.semfronteiras.dto.usuario;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public  class RequestUsuarioCadastrarDTO {
-    public String email;
-    public String senha;
-    public String situacao;
+
+    private String email;
+    private String senha;
+    private String situacao;
 
     }
 
