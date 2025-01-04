@@ -1,9 +1,11 @@
 package br.com.rnconsulting.semfronteiras.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -17,7 +19,9 @@ public class PessoaEntity {
     private String numRg;
     private String ufRg;
     private String nomeCompleto;
-    private int anoNascimento;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date dtNascimento;
     private String naturalidade;
     private String nacionalidade;
     private String tituloEleitor;
